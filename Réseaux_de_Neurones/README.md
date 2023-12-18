@@ -1,4 +1,4 @@
-# TP Réseaux de neurones
+# Réseaux de neurones
 
 Nous découvrons ici les réseaux de neurones, de la théorie à la pratique!
 Vous trouverez ici un diaporama de présentation, un support de travail ainsi qu'une correction si vous bloquez !
