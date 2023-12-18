@@ -11,7 +11,7 @@ Quatre formations vous sont ici proposées, avec sujet, corrigé et support visu
 
 ## Les différentes formations
 
-1. Réseaux de neurones
-2. Réseaux à convolution
-3. Introduction aux GAN
-4. Apprentissage par Renforcement
+1. [Réseaux de neurones](/Réseaux_de_Neurones)
+2. [Réseaux à convolution](/Réseaux_à_convolution)
+3. [Introduction aux GAN](/Introduction_aux_GAN)
+4. [Apprentissage par Renforcement](/Apprentissage_par_renforcement)
