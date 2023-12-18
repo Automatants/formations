@@ -1,6 +1,6 @@
-# Formation-Reinforcement-Learning
+# Formation-Reinforcement-Learning 
 This is the repository for the Reinforcement Learning course at Automatants, the AI student association of CentraleSupélec. The course was given to students of the CentraleSupélec campus as an introduction to Reinforcement Learning.
-
+Huge thanks to Timothé Boulet for providing us with this tutorial.
 <p align="center">
   <img src="figure/slide_intro.png" width="60%"/>
 </p>
