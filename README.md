@@ -15,3 +15,4 @@ Quatre formations vous sont ici proposées, avec sujet, corrigé et support visu
 2. [Réseaux à convolution](/Réseaux_à_convolution)
 3. [Introduction aux GAN](/Introduction_aux_GAN)
 4. [Apprentissage par Renforcement](/Apprentissage_par_renforcement)
+5. [Formation DGX](/DGX)
