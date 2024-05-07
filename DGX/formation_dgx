@@ -1,0 +1,233 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Tuto DGX\n",
+    "\n",
+    "Lien de la doc [ici](https://hubia_dgx.pages.centralesupelec.fr)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Prérequis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Bienvenue sur ce tuto pour apprendre à utiliser la DGX (ou du moins les bases). Pour le suivre, vous aurez besoin de :\n",
+    "\n",
+    "- Pour suivre ce tuto, il est nécessaire d'avoir un compte sur la DGX. Si vous n'en avez pas, vous devez contacter le VP Geek. Il vous faudra une clé SSH (faire `ssh-keygen` dans un terminal pour en générer une si vous n'en avez pas déjà une, et récupérer la clé publique dans le fichier `~/.ssh/%Clé publique%.pub` pour linux ou mac, `C:\\Users\\%USERNAME%\\.ssh\\%Clé publique%.pub`).\n",
+    "\n",
+    "- Il est également nécessaire d'avoir un client SSH. Sur Windows, vous pouvez utiliser [Putty](https://www.putty.org/). Sur Linux et MacOS, vous pouvez utiliser le terminal. Personnellement, je vous conseil d'utiliser le terminal, même sous windows, car c'est plus simple et plus rapide."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Se connecter à la DGX"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "vscode": {
+     "languageId": "plaintext"
+    }
+   },
+   "source": [
+    "Pour mettre en place un raccourci simple, je vous conseil de suivre les étapes suivantes dans un terminal:\n",
+    "\n",
+    "1. `cd ~/.ssh/` pour linux ou mac, `cd C:\\Users\\%USERNAME%\\.ssh` pour windows\n",
+    "\n",
+    "2. `touch config` pour créer un fichier de configuration sur linux ou mac, `echo.>config` pour windows\n",
+    "\n",
+    "3. `nano config` pour ouvrir le fichier de configuration sur linux ou mac, `notepad config` pour windows\n",
+    "\n",
+    "4. Ajouter les lignes suivantes dans le fichier de configuration:\n",
+    "\n",
+    "    ```\n",
+    "    Host dgx\n",
+    "        HostName 138.195.195.185\n",
+    "        User %Votre login%\n",
+    "        IdentityFile ~/.ssh/%Votre clé privée%\n",
+    "    ```\n",
+    "\n",
+    "5. Enregistrez et fermez le fichier de configuration\n",
+    "\n",
+    "Et voilà, vous avez un raccourci pour vous connecter à la DGX. Pour vous connecter, il vous suffit de taper `ssh dgx` dans un terminal."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## L'environnement de travail"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Il est important de savoir que la DGX est un serveur, et que vous n'avez pas accès à une interface graphique. Cependant, maintenant que la config est faite, vous pouvez lancer VSCode sur votre machine et vous connecter à la DGX en utilisant l'extension Remote - SSH.\n",
+    "\n",
+    "Une fois cette extension installée, vous pouvez cliquer sur l'icône en bas à gauche de VSCode, et sélectionner \"Remote-SSH: Connect to Host...\". Vous pouvez alors sélectionner \"dgx\" dans la liste des hosts, et vous connecter à la DGX. Vous pourrez alors ouvrir votre dossier utilisateur."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Environnement Python"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Il faut maintenant créer votre environnement virtuel python pour installer vos librairies. Vous pouvez en faire un pour tout vos projets, ou un par projet pour éviter les conflits. L'important est de ne pas installer vos librairies directement sur l'environnement global et de ne pas oubliez d'activer votre environnement avant de lancer votre code (sinon ça crash évidemment...).\n",
+    "\n",
+    "Pour créer un environnement virtuel, il vous suffit de taper `python -m venv %Nom de votre environnement%` dans un terminal, à l'endroit où vous voulez le créer.\n",
+    "\n",
+    "Ensuite, vous pouvez activer votre environnement en tapant `source ./%Nom de votre environnement%/bin/activate` et installer vos librairies avec `pip install %Nom de la librairie%`.\n",
+    "\n",
+    "Pour activer votre environnement dans VSCode, ouvrer le projet dans lequel vous travaillez, et cliquez sur le nom de l'environnement en bas à droite de VSCode. Vous pouvez alors sélectionner votre environnement manuellement en allant dans le dossier de votre environnement, puis dans bin, puis en sélectionnant python."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Fonctionnement des Batchs"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La DGX utilise des batchs pour lancer des scripts. Sans ça, vous n'aurez pas accès à la puissance de calcul des GPU. Il faut donc créer un fichier `nom_du_fichier.batch` pour lancer votre script.\n",
+    "\n",
+    "Les liens avec `~` ne semblent pas fonctionner (pour moi du moins), il faut donc mettre le chemin complet du fichier. Vous pouvez le récupérer en faisant `pwd` dans le terminal.\n",
+    "\n",
+    "Une architecture de batch qui fonctionne bien est la suivante (à adapter en fonction de vos besoins):"
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {},
+   "source": [
+    "#!/bin/bash\n",
+    "#\n",
+    "#SBATCH --job-name=%VOTRE_NOM_DE_JOB%                                    ## Choisir le nom du job\n",
+    "#SBATCH --output=/raid/home/automatants/%USERNAME%/out.out               ## Choisir le nom du fichier de sortie \n",
+    "#SBATCH --error=/raid/home/automatants/%USERNAME%/out.out                ## Choisir le nom du fichier d'erreur (mettre le même permet d'obtenir la sortie python dans un seul fichier)\n",
+    "\n",
+    "## Si vous voulez recevoir des mails pour suivre l'avancement de votre job\n",
+    "#SBATCH --mail-type=ALL\n",
+    "#SBATCH --mail-user=%VOTRE_EMAIL%\n",
+    "\n",
+    "## La DGX propose 4 types de partition à choisir: prod10, prod 20, prod 40 ou prod80 . Vous pouvez choisir (sachant que la 80 a besoin d'un fichier un peu différent)\n",
+    "#SBATCH --partition=prod10\n",
+    "\n",
+    "## Choisir le GPU en conséquence de la partition: soit 1g.10gb:[1:10] pour prod10, 2g.20gb:[1:4] pour prod20, 3g.40gb:1 pour prod40 ou A100.80gb:1 pour prod80.\n",
+    "#SBATCH --gres=gpu:1g.10gb:1\n",
+    "\n",
+    "## Je conseil de ne pas toucher à ces paramètres (ils marchent), mais vous pouvez les modifier si vous savez ce que vous faites.\n",
+    "## For ntasks and cpus: total requested cpus (ntasks * cpus-per-task) must be in [1: 4 * nMIG] with nMIG = nb_1g.10gb | 2 * nb_2g.20gb | 4 * nb_3g.40gb | 8 * nb_A100.80gb\n",
+    "#SBATCH --ntasks=1\n",
+    "#SBATCH --cpus-per-task=4\n",
+    "\n",
+    "## Choisir le temps d'exécution maximum de votre job\n",
+    "#SBATCH --time=24:0:0\n",
+    "\n",
+    "## Virtual environment (activer l'environnement virtuel python avant de lancer le script python)\n",
+    "## Ici, on suppose que l'environnement virtuel est dans le répertoire ~/venv\n",
+    "source /raid/home/automatants/%USERNAME%/venv/bin/activate\n",
+    "\n",
+    "## Aller dans le répertoire de travail pour permettre les lien relatifs\n",
+    "cd /raid/home/automatants/%USERNAME%/working_directory\n",
+    "\n",
+    "## Lancer votre script python\n",
+    "python main.py"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Vous pouvez copier-coller le code de la cellule précédente dans un fichier `nom_du_fichier.batch` et le modifier en fonction de vos besoins. \n",
+    "\n",
+    "- Pour lancer le batch, il vous suffit de taper `sbatch nom_du_fichier.batch` dans un terminal.\n",
+    "\n",
+    "- Pour voir l'état de votre batch, vous pouvez taper `squeue` dans un terminal. Vous verrez alors l'état de votre batch, et vous pourrez récupérer le numéro de votre batch.\n",
+    "\n",
+    "- Pour annuler un batch, vous pouvez taper `scancel %numéro de votre batch%` dans un terminal."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Et voilà !\n",
+    "\n",
+    "Vous savez globalement les bases pour utiliser la DGX. Pour aller plus loin, je vous conseil de regarder la doc, qui est très bien faite. Bonne chance pour vos projets !"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Pour le cas de la partition de 80Go, voici un exemple de batch qui fonctionne bien:"
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {},
+   "source": [
+    "#!/bin/bash\n",
+    "#\n",
+    "#SBATCH --job-name=%VOTRE_NOM_DE_JOB%                                    ## Choisir le nom du job\n",
+    "#SBATCH --output=/raid/home/automatants/%USERNAME%/out.out               ## Choisir le nom du fichier de sortie \n",
+    "#SBATCH --error=/raid/home/automatants/%USERNAME%/out.out                ## Choisir le nom du fichier d'erreur (mettre le même permet d'obtenir la sortie python dans un seul fichier)\n",
+    "\n",
+    "## Si vous voulez recevoir des mails pour suivre l'avancement de votre job\n",
+    "#SBATCH --mail-type=ALL\n",
+    "#SBATCH --mail-user=%VOTRE_EMAIL%\n",
+    "\n",
+    "#SBATCH --partition=prod80\n",
+    "\n",
+    "#SBATCH --gres=gpu:A100.80gb:1\n",
+    "\n",
+    "## For ntasks and cpus: total requested cpus (ntasks * cpus-per-task) must be in [1: 4 * nMIG] with nMIG = nb_1g.10gb | 2 * nb_2g.20gb | 4 * nb_3g.40gb | 8 * nb_A100.80gb\n",
+    "#SBATCH --ntasks=1\n",
+    "#SBATCH --nodes=1\n",
+    "#SBATCH --ntasks-per-node=1\n",
+    "#SBATCH --cpus-per-task=8\n",
+    "#SBATCH --mem-per-cpu=10G\n",
+    "#SBATCH --time=24:0:0\n",
+    "\n",
+    "## Virtual environment\n",
+    "source /raid/home/automatants/%USERNAME%/venv/bin/activate\n",
+    "\n",
+    "## Aller dans le répertoire de travail pour permettre les lien relatifs\n",
+    "cd /raid/home/automatants/%USERNAME%/working_directory\n",
+    "\n",
+    "## Lancer votre script python\n",
+    "python main.py"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
